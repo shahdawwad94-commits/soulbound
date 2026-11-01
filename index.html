@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكي هوية الروح الشاملة وخزينة الوثائق (SBTs Multi-Credential Vault & Recovery)</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Cairo, Tajawal & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Tajawal"', '"Cairo"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            // Warm Aesthetic Palette (Soft Beige, Pale Pink, Cream, Nude, Mocha)
+            warm: {
+              cream: '#FAF6F0',
+              beige: '#F5EBE1',
+              nude: '#EFE4D8',
+              sand: '#E6D7C8',
+              pinkSoft: '#FCEEEF',
+              pinkBorder: '#F2D3D8',
+              roseMuted: '#B56B77',
+              roseHover: '#9F5763',
+              mochaSoft: '#7D6B60',
+              mochaDark: '#4A372E',
+              mochaDeep: '#281E19',
+              cardBg: '#FFFDF9',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Smooth theme transitions */
+    *, *::before, *::after {
+      transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+      transition-duration: 250ms;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .dark ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    html:not(.dark) ::-webkit-scrollbar-track {
+      background: #FAF6F0;
+    }
+    html:not(.dark) ::-webkit-scrollbar-thumb {
+      background: #E6D7C8;
+      border-radius: 9999px;
+    }
+
+    /* Subtle background grid pattern */
+    .bg-grid-dark {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .bg-grid-warm {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(74, 55, 46, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(74, 55, 46, 0.04) 1px, transparent 1px);
+    }
+
+    /* Shimmer effect for badges */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer-badge {
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 3.5s infinite;
+    }
+  </style>
+</head>
+<body class="bg-warm-cream dark:bg-[#090D16] text-warm-mochaDeep dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased bg-grid-warm dark:bg-grid-dark">
+
+  <!-- ============================================== -->
+  <!-- TOP HEADER WITH SLEEK LIGHT/DARK MODE TOGGLE -->
+  <!-- ============================================== -->
+  <header class="border-b border-warm-nude dark:border-slate-800/80 bg-warm-cardBg/90 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Emblem -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-warm-roseMuted to-warm-mochaDark dark:from-indigo-600 dark:to-purple-600 p-[1.5px] shadow-md shrink-0">
+          <div class="w-full h-full bg-warm-cardBg dark:bg-slate-900 rounded-[10px] flex items-center justify-center font-bold text-warm-roseMuted dark:text-indigo-400 text-sm">
+            SBT
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-bold text-warm-mochaDeep dark:text-white">
+              محاكي هوية الروح <span class="font-mono text-warm-roseMuted dark:text-indigo-400">(SOUL-ID)</span>
+            </h1>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-warm-pinkSoft dark:bg-indigo-950/60 text-warm-roseMuted dark:text-indigo-300 border border-warm-pinkBorder dark:border-indigo-800">
+              خزينة الوثائق المتعددة + استرداد الأوصياء
+            </span>
+          </div>
+          <p class="text-xs text-warm-mochaSoft dark:text-slate-400 hidden sm:block">
+            نظام الهوية اللامركزية الشاملة واستعادة المفاتيح المفقودة دون ضياع أي وثيقة
+          </p>
+        </div>
+      </div>
+
+      <!-- Controls: Reset & Theme Toggle -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Reset Simulation Button -->
+        <button 
+          onclick="resetSimulator()" 
+          class="px-3 py-1.5 rounded-xl border border-warm-nude dark:border-slate-700 bg-warm-beige/60 hover:bg-warm-beige dark:bg-slate-800/70 dark:hover:bg-slate-700 text-xs font-semibold text-warm-mochaDark dark:text-slate-300 transition flex items-center gap-1.5"
+          title="إعادة ضبط المحاكاة للوضع الافتراضي"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="hidden md:inline">إعادة ضبط</span>
+        </button>
+
+        <!-- THE SLEEK LIGHT / DARK THEME TOGGLE SWITCH -->
+        <button 
+          id="themeToggleBtn"
+          onclick="toggleTheme()" 
+          class="px-3.5 py-1.5 rounded-xl border border-warm-nude dark:border-slate-700 bg-warm-beige dark:bg-slate-800 hover:border-warm-roseMuted dark:hover:border-indigo-500 text-xs font-bold text-warm-mochaDeep dark:text-slate-100 shadow-sm transition flex items-center gap-2 group"
+          title="تبديل مظهر العرض"
+        >
+          <span id="themeIcon" class="text-sm transform group-hover:scale-110 transition">☀️</span>
+          <span id="themeLabel">الوضع الفاتح الأنيق</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================== -->
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <!-- ============================================== -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- TOP BRIEF INTRO BANNER -->
+    <section class="mb-6 p-4 sm:p-5 rounded-2xl border border-warm-nude dark:border-slate-800/90 bg-warm-cardBg dark:bg-slate-900/70 shadow-sm relative overflow-hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 ml-1.5 animate-pulse"></span>
+              محفظة الروح المتقدمة (Multi-Credential Vault & Guardian Recovery)
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-warm-mochaSoft dark:text-slate-300 leading-relaxed">
+            محاكاة متكاملة لحفظ وثائق متعددة (لجوء، شهادات جامعية، تصاريح عمل، هويات وطنية) في <span class="text-warm-roseMuted dark:text-indigo-400 font-bold">خزينة وثائق مخصصة</span> غير قابلة للنقل أو التنازل، مع تجربة استعادة الهوية ونقل كافة الوثائق بنجاح إلى <span class="text-emerald-600 dark:text-emerald-400 font-bold">عنوان محفظة جديد</span> عند فقدان الهاتف أو ضياع المفتاح.
+          </p>
+        </div>
+
+        <!-- 3-Step Interactive Indicators -->
+        <div class="flex items-center gap-1.5 shrink-0 bg-warm-beige dark:bg-slate-950 p-1.5 rounded-xl border border-warm-nude dark:border-slate-800 text-xs">
+          <div class="px-2.5 py-1 rounded-lg bg-warm-cardBg dark:bg-indigo-600 text-warm-roseMuted dark:text-white font-bold shadow-xs">
+            ١. إصدار وإيداع بالخزينة
+          </div>
+          <span class="text-warm-mochaSoft dark:text-slate-600">←</span>
+          <div class="px-2.5 py-1 rounded-lg text-warm-mochaSoft dark:text-slate-400 font-medium">
+            ٢. حظر النقل والبيع
+          </div>
+          <span class="text-warm-mochaSoft dark:text-slate-600">←</span>
+          <div class="px-2.5 py-1 rounded-lg text-warm-mochaSoft dark:text-slate-400 font-medium">
+            ٣. استرداد الخزينة كاملة
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TWO COLUMNS GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- ============================================== -->
+      <!-- RIGHT COLUMN: INTERACTIVE CONTROLS & FORMS -->
+      <!-- ============================================== -->
+      <div class="lg:col-span-5 flex flex-col gap-5">
+
+        <!-- 1. STEP 1: REGISTRATION & ISSUANCE -->
+        <div class="bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-warm-beige dark:border-slate-800">
+            <h2 class="text-sm font-bold text-warm-mochaDeep dark:text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-warm-roseMuted dark:bg-indigo-500"></span>
+              <span>المرحلة الأولى: التسجيل وإصدار وثائق SBT</span>
+            </h2>
+            <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-warm-pinkSoft dark:bg-indigo-950/60 text-warm-roseMuted dark:text-indigo-300 border border-warm-pinkBorder dark:border-indigo-800/80">
+              خطوة ١
+            </span>
+          </div>
+
+          <!-- Quick Autofill Presets -->
+          <div class="mb-4">
+            <label class="block text-[11px] font-bold text-warm-mochaSoft dark:text-slate-400 mb-2">
+              ⚡ ملفات تعريفية جاهزة 
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              
+              <button 
+                type="button" 
+                onclick="loadPresetProfile('refugee')" 
+                class="p-2.5 rounded-xl bg-warm-beige/70 hover:bg-warm-beige dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-warm-nude dark:border-slate-700 text-right transition hover:border-warm-roseMuted dark:hover:border-indigo-500 group"
+              >
+                <div class="text-xs font-bold text-warm-roseMuted dark:text-indigo-300 flex items-center justify-between">
+                  <span>🕊️ لاجئ (Refugee)</span>
+                </div>
+                
+              </button>
+
+              <button 
+                type="button" 
+                onclick="loadPresetProfile('graduate')" 
+                class="p-2.5 rounded-xl bg-warm-beige/70 hover:bg-warm-beige dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-warm-nude dark:border-slate-700 text-right transition hover:border-warm-roseMuted dark:hover:border-indigo-500 group"
+              >
+                <div class="text-xs font-bold text-warm-mochaDark dark:text-purple-300 flex items-center justify-between">
+                  <span>🎓 خريج جامعي (Graduate)</span>
+                </div>
+                
+              </button>
+
+              <button 
+                type="button" 
+                onclick="loadPresetProfile('employee')" 
+                class="p-2.5 rounded-xl bg-warm-beige/70 hover:bg-warm-beige dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-warm-nude dark:border-slate-700 text-right transition hover:border-warm-roseMuted dark:hover:border-indigo-500 group"
+              >
+                <div class="text-xs font-bold text-warm-mochaDark dark:text-teal-300 flex items-center justify-between">
+                  <span>💼 موظف (Employee)</span>
+                </div>
+                
+              </button>
+
+              <button 
+                type="button" 
+                onclick="loadPresetProfile('citizen')" 
+                class="p-2.5 rounded-xl bg-warm-beige/70 hover:bg-warm-beige dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-warm-nude dark:border-slate-700 text-right transition hover:border-warm-roseMuted dark:hover:border-indigo-500 group"
+              >
+                <div class="text-xs font-bold text-warm-mochaDark dark:text-amber-300 flex items-center justify-between">
+                  <span>🏛️ مواطن (Citizen)</span>
+                </div>
+                
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Issuance Form -->
+          <form id="sbtIssuanceForm" onsubmit="handleIssueOrAppendSBT(event)" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="fullName" class="block text-xs font-bold text-warm-mochaDeep dark:text-slate-200 mb-1">
+                  الاسم الكامل <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="fullName" 
+                  required 
+                  value="أميرة الحسن"
+                  class="w-full bg-warm-cream dark:bg-slate-950 border border-warm-nude dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-warm-mochaDeep dark:text-white focus:outline-none focus:border-warm-roseMuted dark:focus:border-indigo-500 transition"
+                />
+              </div>
+
+              <div>
+                <label for="idNumber" class="block text-xs font-bold text-warm-mochaDeep dark:text-slate-200 mb-1">
+                  رقم الهوية / القيد <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="idNumber" 
+                  required 
+                  value="UNHCR-REF-902817"
+                  dir="ltr"
+                  class="w-full bg-warm-cream dark:bg-slate-950 border border-warm-nude dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs font-mono text-warm-mochaDeep dark:text-white text-left focus:outline-none focus:border-warm-roseMuted dark:focus:border-indigo-500 transition"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="identityCategory" class="block text-xs font-bold text-warm-mochaDeep dark:text-slate-200 mb-1">
+                  فئة الهوية / الاعتماد <span class="text-rose-500">*</span>
+                </label>
+                <select 
+                  id="identityCategory" 
+                  onchange="handleCategorySelectionChange()"
+                  class="w-full bg-warm-cream dark:bg-slate-950 border border-warm-nude dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-warm-mochaDeep dark:text-white focus:outline-none focus:border-warm-roseMuted dark:focus:border-indigo-500 transition cursor-pointer"
+                >
+                  <option value="لاجئ" selected>لاجئ - Refugee</option>
+                  <option value="خريج جامعي">خريج جامعي - Graduate</option>
+                  <option value="موظف">موظف - Employee</option>
+                  <option value="مواطن">مواطن - Citizen</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="documentType" class="block text-xs font-bold text-warm-mochaDeep dark:text-slate-200 mb-1">
+                  عنوان الوثيقة أو الشهادة <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="documentType" 
+                  required 
+                  value="وثيقة لجوء وحماية دولية صادرة من مفوضية الأمم المتحدة (UNHCR)"
+                  class="w-full bg-warm-cream dark:bg-slate-950 border border-warm-nude dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-warm-mochaDeep dark:text-white focus:outline-none focus:border-warm-roseMuted dark:focus:border-indigo-500 transition"
+                />
+              </div>
+            </div>
+
+            <!-- Action Buttons: Update Primary & Add to Vault -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-2">
+              <button 
+                type="submit" 
+                class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs bg-warm-roseMuted hover:bg-warm-roseHover dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-md active:scale-[0.99] transition flex items-center justify-center gap-1.5"
+              >
+                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                </svg>
+                <span>إصدار واعتماد هوية الروح</span>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="appendNewCredentialToVault()" 
+                class="py-2.5 px-3 rounded-xl font-bold text-xs bg-warm-beige hover:bg-warm-nude dark:bg-slate-800 dark:hover:bg-slate-700 text-warm-mochaDeep dark:text-slate-100 border border-warm-nude dark:border-slate-700 active:scale-[0.99] transition flex items-center justify-center gap-1.5"
+              >
+                <span>📁 + إضافة وثيقة للخزينة</span>
+              </button>
+            </div>
+          </form>
+
+        </div>
+
+        <!-- 2. STEP 2: ANTI-TRANSFER RULE TEST -->
+        <div id="step2Container" class="bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          
+          <div class="flex items-center justify-between pb-2.5 border-b border-warm-beige dark:border-slate-800">
+            <h2 class="text-sm font-bold text-warm-mochaDeep dark:text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <span>المرحلة الثانية: اختبار قاعدة عدم النقل (Anti-Transfer)</span>
+            </h2>
+            <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+              خطوة ٢
+            </span>
+          </div>
+
+          <p class="text-xs text-warm-mochaSoft dark:text-slate-300">
+            اختبر ما إذا كان بإمكان حامل المحفظة بيع أو نقل أي من وثائق الـ SBT المخزنة لطرف آخر:
+          </p>
+
+          <button 
+            type="button" 
+            onclick="attemptTransfer()" 
+            class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-warm-pinkSoft hover:bg-warm-pinkBorder dark:bg-slate-800 dark:hover:bg-slate-700 text-rose-700 dark:text-rose-400 border border-warm-pinkBorder dark:border-slate-700 active:scale-[0.99] transition flex items-center justify-center gap-2"
+          >
+            <span>⚡</span>
+            <span>محاولة نقل أو بيع إحدى الهويات لشخص آخر (Try to Transfer)</span>
+          </button>
+        </div>
+
+        <!-- 3. STEP 3: ENHANCED DETAILED WALLET & KEY LOSS RECOVERY FLOW -->
+        <div id="step3Container" class="bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+          
+          <div class="flex items-center justify-between pb-2.5 border-b border-warm-beige dark:border-slate-800">
+            <h2 class="text-sm font-bold text-warm-mochaDeep dark:text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span>المرحلة الثالثة: مسار الطوارئ واسترداد الخزينة والمفتاح</span>
+            </h2>
+            <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              خطوة ٣
+            </span>
+          </div>
+
+          <!-- RECOVERY STEP A: Trigger Incident -->
+          <div id="recoveryTriggerSection">
+            <div class="text-xs font-bold text-warm-mochaDeep dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+              <span>📱 الخطوة (أ): محاكاة الحادث وفقدان الهاتف والمفتاح</span>
+            </div>
+            <p class="text-xs text-warm-mochaSoft dark:text-slate-400 mb-2.5 leading-relaxed">
+              عند ضياع الهاتف أو مصادرته، يتم تجميد المحفظة وإلغاء صلاحية المفتاح الخاص القديم فورياً لحماية الهويات:
+            </p>
+            <button 
+              type="button" 
+              onclick="triggerEmergencyLoss()" 
+              id="lostPhoneBtn"
+              class="w-full py-3 px-4 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 active:scale-[0.99] transition flex items-center justify-center gap-2 animate-pulse"
+            >
+              <span>🚨</span>
+              <span>فقدان الهاتف / ضياع المفتاح الخاص (Lost Phone / Key)</span>
+            </button>
+          </div>
+
+          <!-- DETAILED RECOVERY FLOW (REVEALED AFTER LOSS IS TRIGGERED) -->
+          <div id="recoveryInteractiveFlow" class="hidden space-y-4 pt-1">
+            
+            <!-- Step A Status Banner (Old Key Revocation Notification) -->
+            <div class="p-3.5 bg-rose-50 dark:bg-rose-950/50 border border-rose-300 dark:border-rose-800 rounded-xl space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-bold text-rose-700 dark:text-rose-300">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                  <span>تم إيقاف المفتاح الخاص القديم وإلغاء صلاحيته:</span>
+                </span>
+                <span class="font-mono text-[10px] text-rose-600 dark:text-rose-400" dir="ltr" id="revokedAddressDisplay">0x4a9F...8e2</span>
+              </div>
+              <p class="text-[11px] text-rose-800 dark:text-rose-300 leading-relaxed">
+                تم تجميد المحفظة وحجب كامل الخزينة محلياً لحمايتها من استغلال أي طرف عثر على الجهاز المفقود. يبدأ الآن بروتوكول التحقق المؤسسي.
+              </p>
+            </div>
+
+            <!-- Step B: Institutional & Social Guardian Verification -->
+            <div class="p-3.5 bg-warm-cream dark:bg-slate-950 rounded-xl border border-warm-nude dark:border-slate-800 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-warm-mochaDeep dark:text-white">
+                  الخطوة (ب): مصادقة الأوصياء المعتمدين (Guardian Quorum)
+                </span>
+                <span id="quorumStatusTag" class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                  بانتظار الفحص
+                </span>
+              </div>
+
+              <!-- Guardians List Checklist -->
+              <div class="space-y-1.5 text-xs">
+                
+                <div class="p-2 rounded-lg bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span id="guardianCheck1" class="text-slate-400 text-xs">⏳</span>
+                    <div>
+                      <div class="font-bold text-warm-mochaDeep dark:text-slate-200 text-[11px]">المفوضية السامية للأمم المتحدة (UNHCR)</div>
+                      <div class="text-[10px] text-warm-mochaSoft dark:text-slate-400">إثبات البصمة الحيوية المشفرة (Zero-Knowledge Biometrics)</div>
+                    </div>
+                  </div>
+                  <span id="guardianBadge1" class="text-[10px] text-warm-mochaSoft dark:text-slate-400 font-mono">قيد الانتظار</span>
+                </div>
+
+                <div class="p-2 rounded-lg bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span id="guardianCheck2" class="text-slate-400 text-xs">⏳</span>
+                    <div>
+                      <div class="font-bold text-warm-mochaDeep dark:text-slate-200 text-[11px]">الجهة الأكاديمية ومصدر الشهادة (MIT)</div>
+                      <div class="text-[10px] text-warm-mochaSoft dark:text-slate-400">مطابقة التوقيع الرقمي لسجل التخرج الأكاديمي</div>
+                    </div>
+                  </div>
+                  <span id="guardianBadge2" class="text-[10px] text-warm-mochaSoft dark:text-slate-400 font-mono">قيد الانتظار</span>
+                </div>
+
+                <div class="p-2 rounded-lg bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span id="guardianCheck3" class="text-slate-400 text-xs">⏳</span>
+                    <div>
+                      <div class="font-bold text-warm-mochaDeep dark:text-slate-200 text-[11px]">شبكة الأوصياء المؤسسيين والحكوميين</div>
+                      <div class="text-[10px] text-warm-mochaSoft dark:text-slate-400">اكتمال نصاب التوقيع المتعدد (Quorum Multi-Sig 3/3)</div>
+                    </div>
+                  </div>
+                  <span id="guardianBadge3" class="text-[10px] text-warm-mochaSoft dark:text-slate-400 font-mono">قيد الانتظار</span>
+                </div>
+
+              </div>
+
+              <!-- Start Verification Button -->
+              <button 
+                type="button" 
+                id="startGuardianVerificationBtn"
+                onclick="runGuardianVerificationQuorum()" 
+                class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs transition flex items-center justify-center gap-1.5"
+              >
+                <span>🔍 بدء فحص وتوثيق نصاب الأوصياء (Verify Quorum)</span>
+              </button>
+            </div>
+
+            <!-- Step C: Map to New Wallet Address & Restore Multi-Credential Vault -->
+            <div id="recoveryStepCContainer" class="p-3.5 bg-warm-cream dark:bg-slate-950 rounded-xl border border-warm-nude dark:border-slate-800 space-y-3 opacity-50 pointer-events-none transition-all">
+              
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-warm-mochaDeep dark:text-white">
+                  الخطوة (ج): ربط الخزينة بالمحفظة الجديدة واسترجاع كافة الوثائق
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  جاهز للربط
+                </span>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-warm-mochaSoft dark:text-slate-400 mb-1">
+                  عنوان المحفظة الجديدة المجهزة (New Wallet Address):
+                </label>
+                <input 
+                  type="text" 
+                  id="newWalletInput" 
+                  readonly 
+                  dir="ltr"
+                  value="0x71Ce3B456e792A11f44dB29A62b083bC3345A910"
+                  class="w-full bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-emerald-600 dark:text-emerald-400 text-left font-bold"
+                />
+              </div>
+
+              <!-- Final Restore Approval Button -->
+              <button 
+                type="button" 
+                id="approveRestoreBtn"
+                onclick="finalizeRecoveryAndRestoreVault()" 
+                class="w-full py-3 px-4 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 active:scale-[0.99] transition flex items-center justify-center gap-2"
+              >
+                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>الموافقة المؤسسية ونقل كافة الوثائق للمحفظة الجديدة</span>
+              </button>
+
+            </div>
+
+            <!-- Success Recovery Banner -->
+            <div id="recoverySuccessBanner" class="hidden p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/60 rounded-xl space-y-2 text-xs text-emerald-900 dark:text-emerald-300">
+              <div class="flex items-center gap-2 font-bold text-sm">
+                <span>🎉</span>
+                <span>تمت استعادة محفظة الروح وخزينة الوثائق بنجاح تام!</span>
+              </div>
+              <p class="text-xs leading-relaxed text-emerald-800 dark:text-emerald-400" id="successBannerText">
+                تم بنجاح نقل هوية الروح وإعادة توجيه كامل الوثائق المعتمدة إلى العنوان الجديد دون فقدان أي شهادة أو اعتماد!
+              </p>
+              <div class="pt-1">
+                <button onclick="resetLossState()" class="text-xs font-bold text-warm-roseMuted dark:text-indigo-400 underline">
+                  إعادة تجربة سيناريو الاستعادة ←
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ============================================== -->
+      <!-- LEFT COLUMN: SOUL WALLET & DEDICATED VAULT -->
+      <!-- ============================================== -->
+      <div class="lg:col-span-7 space-y-5 sticky top-20">
+        
+        <!-- ========================================== -->
+        <!-- 1. PRIMARY SOUL WALLET DIGITAL ID CARD -->
+        <!-- ========================================== -->
+        <div class="bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+          
+          <!-- Wallet Header: Title & Dynamic Status Badge -->
+          <div class="flex items-center justify-between pb-3 border-b border-warm-beige dark:border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" id="walletStatusDot"></span>
+              <div>
+                <h2 class="text-sm font-bold text-warm-mochaDeep dark:text-white flex items-center gap-2">
+                  <span>محفظة الروح (Soul Wallet)</span>
+                </h2>
+              </div>
+            </div>
+
+            <!-- Status Badge -->
+            <div id="walletStatusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span id="walletStatusText">الحالة: نشطة ومحمية // ACTIVE</span>
+            </div>
+          </div>
+
+          <!-- Current Bound Address & DID -->
+          <div class="mt-3.5 p-3 rounded-xl bg-warm-cream dark:bg-slate-950 border border-warm-nude dark:border-slate-800 grid grid-cols-2 gap-2 text-xs font-mono">
+            <div>
+              <span class="text-warm-mochaSoft dark:text-slate-400 text-[10px] block font-sans">العنوان المرتبط حالياً:</span>
+              <span id="walletAddressDisplay" dir="ltr" class="text-warm-roseMuted dark:text-indigo-400 font-bold truncate block text-left">
+                0x4a9F91e2b8A072Ea3B45F121C6188e2
+              </span>
+            </div>
+            <div>
+              <span class="text-warm-mochaSoft dark:text-slate-400 text-[10px] block font-sans">معرّف الروح اللامركزي (DID):</span>
+              <span id="walletDidDisplay" dir="ltr" class="text-warm-mochaDark dark:text-purple-400 font-bold truncate block text-left">
+                did:soul:0x4a9...8e2
+              </span>
+            </div>
+          </div>
+
+          <!-- THE PRIMARY DIGITAL CARD -->
+          <div class="mt-4 relative rounded-2xl border border-warm-sand dark:border-slate-700/80 bg-gradient-to-br from-warm-cardBg via-warm-beige/40 to-warm-nude/40 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-5 shadow-md overflow-hidden">
+            
+            <!-- Top Row: Card Title & Soulbound Badge -->
+            <div class="flex items-start justify-between mb-4 relative z-10">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-warm-roseMuted dark:bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  ID
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-warm-mochaDeep dark:text-white">بطاقة الهوية الرقمية السيادية</div>
+                  <div class="text-[10px] text-warm-mochaSoft dark:text-slate-400 font-mono">معيار ERC-5114 Verifiable SBT</div>
+                </div>
+              </div>
+
+              <!-- MANDATORY SOULBOUND BADGE -->
+              <div class="px-3 py-1 rounded-full bg-warm-pinkSoft dark:bg-amber-950/70 border border-warm-pinkBorder dark:border-amber-700/80 text-warm-roseMuted dark:text-amber-300 font-bold text-xs flex items-center gap-1.5 shadow-xs shimmer-badge">
+                <span>🔒 Soulbound - غير قابلة للنقل</span>
+              </div>
+            </div>
+
+            <!-- Card Body Info -->
+            <div class="space-y-3.5 text-xs relative z-10">
+              <div class="flex justify-between items-baseline pb-2.5 border-b border-warm-nude dark:border-slate-800">
+                <div>
+                  <span class="text-[10px] text-warm-mochaSoft dark:text-slate-400 block mb-0.5">صاحب الهوية</span>
+                  <span id="cardHolderName" class="text-base font-bold text-warm-mochaDeep dark:text-white">أميرة الحسن</span>
+                </div>
+                <div class="text-left">
+                  <span class="text-[10px] text-warm-mochaSoft dark:text-slate-400 block mb-0.5 text-left">فئة الهوية</span>
+                  <span id="cardCategoryBadge" class="inline-block px-2.5 py-0.5 rounded-lg text-xs font-bold bg-warm-pinkSoft dark:bg-indigo-950/70 text-warm-roseMuted dark:text-indigo-300 border border-warm-pinkBorder dark:border-indigo-800">
+                    لاجئ
+                  </span>
+                </div>
+              </div>
+
+              <!-- Document Type -->
+              <div>
+                <span class="text-[10px] text-warm-mochaSoft dark:text-slate-400 block mb-1">نوع الوثيقة أو الشهادة المعتمدة</span>
+                <div id="cardDocumentType" class="p-2.5 rounded-xl bg-warm-cardBg dark:bg-slate-950 border border-warm-nude dark:border-slate-800 font-semibold text-warm-mochaDeep dark:text-slate-200 text-xs leading-relaxed">
+                  وثيقة لجوء وحماية دولية صادرة من مفوضية الأمم المتحدة (UNHCR)
+                </div>
+              </div>
+
+              <!-- Registry Number & Issuing Authority -->
+              <div class="grid grid-cols-2 gap-3 pt-1 text-xs font-mono">
+                <div>
+                  <span class="text-[10px] text-warm-mochaSoft dark:text-slate-400 block font-sans">رقم السجل:</span>
+                  <span id="cardIdNumber" dir="ltr" class="text-warm-mochaDeep dark:text-slate-200 font-bold block text-right">UNHCR-REF-902817</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-warm-mochaSoft dark:text-slate-400 block font-sans">الجهة المصدرة:</span>
+                  <span id="cardIssuer" class="text-warm-roseMuted dark:text-teal-400 font-sans font-bold truncate block">UNHCR جنيف</span>
+                </div>
+              </div>
+
+              <!-- Cryptographic Hash & QR Matrix Mock -->
+              <div class="pt-2 border-t border-warm-nude dark:border-slate-800 flex items-center justify-between">
+                <div class="space-y-0.5">
+                  <span class="text-[9px] text-warm-mochaSoft dark:text-slate-500 block">البصمة المشفرة للرمز (Token Hash)</span>
+                  <span id="cardTokenHash" dir="ltr" class="text-[10px] font-mono text-warm-roseMuted dark:text-indigo-400 font-bold block text-right">0x8f2a...7d19c3e</span>
+                  <div class="text-[9px] text-warm-mochaSoft dark:text-slate-500">حالة الرمز: مربوط بالروح ومحصّن</div>
+                </div>
+
+                <div class="w-11 h-11 bg-white p-1 rounded-lg flex items-center justify-center shrink-0 shadow-xs border border-warm-nude dark:border-transparent">
+                  <svg class="w-full h-full text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 4h4v4h-4v-4zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2zm0 2h2v2h-2v-2z" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Two Action Buttons at the Bottom of the Active Soul Wallet Card -->
+              <div class="pt-3 border-t border-warm-nude/80 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button 
+                  type="button" 
+                  onclick="handleWalletTransferClick()" 
+                  class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-warm-pinkSoft hover:bg-warm-pinkBorder dark:bg-slate-800/90 dark:hover:bg-slate-800 text-rose-700 dark:text-rose-400 border border-warm-pinkBorder dark:border-slate-700 active:scale-[0.99] transition flex items-center justify-center gap-1.5 shadow-xs"
+                >
+                  <span class="text-rose-500">⚡</span>
+                  <span>محاولة النقل أو البيع (Anti-Transfer Test)</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  onclick="handleWalletRecoveryClick()" 
+                  class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-warm-beige hover:bg-warm-nude dark:bg-slate-800/90 dark:hover:bg-slate-800 text-warm-mochaDeep dark:text-slate-200 border border-warm-nude dark:border-slate-700 active:scale-[0.99] transition flex items-center justify-center gap-1.5 shadow-xs"
+                >
+                  <span class="text-amber-500">🚨</span>
+                  <span>فقدان الهاتف أو المفتاح (Lost Phone / Recovery)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- EMERGENCY LOCKED OVERLAY FOR PRIMARY CARD -->
+            <div id="primaryCardLockedOverlay" class="hidden absolute inset-0 bg-warm-cream/95 dark:bg-slate-950/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+              <div class="w-14 h-14 rounded-full bg-rose-100 dark:bg-rose-950/80 border border-rose-400 dark:border-rose-500 flex items-center justify-center text-rose-600 dark:text-rose-400 text-2xl mb-2.5 animate-bounce">
+                🔒
+              </div>
+              <div class="inline-block px-3 py-1 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 font-bold text-xs mb-1.5 border border-rose-500/20">
+                ⚠️ المحفظة موقوفة ومفقودة (Locked / Lost)
+              </div>
+              <p class="text-xs text-warm-mochaDeep dark:text-slate-200 max-w-xs leading-relaxed mb-3">
+                تم حجب الوثيقة وإلغاء المفتاح القديم لحماية الهوية. اتبع خطوات الاسترداد في العمود الأيمن لاستعادة الهوية على محفظة جديدة.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. DEDICATED CREDENTIALS VAULT CARD -->
+        <!-- ========================================== -->
+        <div class="bg-warm-cardBg dark:bg-slate-900 border border-warm-nude dark:border-slate-800 rounded-2xl p-5 shadow-sm relative">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-warm-beige dark:border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📁</span>
+              <div>
+                <h3 class="text-sm font-bold text-warm-mochaDeep dark:text-white">
+                  خزينة الوثائق والشهادات المتعددة (Credentials Vault)
+                </h3>
+                <p class="text-[11px] text-warm-mochaSoft dark:text-slate-400">
+                  سجل الاعتمادات والشهادات الرسمية المرتبطة بالروح والمحفوظة في المحفظة
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span id="vaultCountTag" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-warm-pinkSoft dark:bg-indigo-950 text-warm-roseMuted dark:text-indigo-300 border border-warm-pinkBorder dark:border-indigo-800 font-bold">
+                ٣ وثائق معتمدة
+              </span>
+            </div>
+          </div>
+
+          <!-- VAULT STATUS & GUARDIAN BADGES -->
+          <div class="my-3 py-2 px-3 bg-warm-cream dark:bg-slate-950 rounded-xl border border-warm-nude dark:border-slate-800 flex items-center justify-between text-[11px]">
+            <div class="flex items-center gap-2 text-warm-mochaSoft dark:text-slate-400">
+              <span>حالة الخزينة:</span>
+              <span id="vaultStatusText" class="font-bold text-emerald-600 dark:text-emerald-400">● مؤمنة ومربوطة بالـ DID</span>
+            </div>
+            <div class="text-[10px] text-warm-mochaSoft dark:text-slate-500 font-mono">
+              تشفير لامركزي كامل EIP-4973
+            </div>
+          </div>
+
+          <!-- VAULT CREDENTIALS LIST -->
+          <div id="vaultCredentialsList" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+            <!-- Dynamically populated credentials -->
+          </div>
+
+          <!-- VAULT LOCK OVERLAY (DURING LOSS INCIDENT) -->
+          <div id="vaultLockedOverlay" class="hidden absolute inset-0 bg-warm-cream/95 dark:bg-slate-950/95 backdrop-blur-md z-30 rounded-2xl flex flex-col items-center justify-center p-6 text-center border-2 border-rose-500/50 shadow-xl">
+            <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/80 border border-rose-500 flex items-center justify-center text-rose-600 dark:text-rose-400 text-xl mb-2">
+              🔒
+            </div>
+            <div class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1">
+              خزينة الوثائق مجمدة مؤقتاً لحمايتها من الضياع
+            </div>
+            <p class="text-xs text-warm-mochaSoft dark:text-slate-300 max-w-sm leading-relaxed mb-3">
+              تم حجب كافة الوثائق والشهادات لمنع أي انتحال بعد فقدان الهاتف. ستتم استعادة ونقل كامل الخزينة فور استكمال موافقة الأوصياء.
+            </p>
+            <span class="text-[11px] font-bold text-warm-roseMuted dark:text-amber-400">
+              اتبع خطوات الاسترداد (ب) و (ج) على اليمين ←
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ANTI-TRANSFER REVERT ERROR ALERT -->
+  <!-- ============================================== -->
+  <div id="transferErrorModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-warm-cardBg dark:bg-slate-900 border-2 border-rose-500/80 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-center animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Close icon button -->
+      <button onclick="closeTransferModal()" class="absolute top-4 left-4 text-warm-mochaSoft hover:text-warm-mochaDeep dark:text-slate-400 dark:hover:text-white p-1">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-3.5 text-2xl">
+        ❌
+      </div>
+
+      <!-- EXACT SPECIFIED ARABIC ERROR MESSAGE -->
+      <h3 class="text-base font-bold text-warm-mochaDeep dark:text-white mb-2 leading-relaxed">
+        ❌ خطأ: هذا الرمز مرتبط بالروح (Soulbound Token) ولا يمكن نقله أو بيعه أو تداوله أبداً!
+      </h3>
+
+      <p class="text-xs text-warm-mochaSoft dark:text-slate-300 leading-relaxed mb-5">
+        ينص العقد الذكي لمعيار EIP-4973 / ERC-5114 على تعطيل دوال النقل بالكامل؛ الوثائق والشهادات مرتبطة بروح حاملها فقط ولا تقبل التنازل أو البيع.
+      </p>
+
+      <button 
+        onclick="closeTransferModal()" 
+        class="w-full py-2.5 px-4 rounded-xl bg-warm-beige hover:bg-warm-nude dark:bg-slate-800 dark:hover:bg-slate-700 text-warm-mochaDeep dark:text-white font-bold text-xs transition"
+      >
+        فهمت ذلك، إغلاق
+      </button>
+
+    </div>
+  </div>
+
+  <!-- CANVAS CONFETTI FOR CELEBRATING RESTORATION -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- ============================================== -->
+  <!-- JAVASCRIPT LOGIC -->
+  <!-- ============================================== -->
+  <script>
+    // Application State with Multi-Credential Vault Support
+    const state = {
+      originalAddress: '0x4a9F91e2b8A072Ea3B45F121C6188e2',
+      newAddress: '0x71Ce3B456e792A11f44dB29A62b083bC3345A910',
+      currentAddress: '0x4a9F91e2b8A072Ea3B45F121C6188e2',
+      isLocked: false,
+      guardianVerified: false,
+      // Vault Multi-SBT Credentials Collection
+      vaultCredentials: [
+        {
+          id: 'SBT-REF-9028',
+          title: 'وثيقة لجوء وحماية دولية معتمدة',
+          issuer: 'المفوضية السامية للأمم المتحدة لشؤون اللاجئين (UNHCR جنيف)',
+          category: 'لاجئ',
+          holderName: 'أميرة الحسن',
+          idNumber: 'UNHCR-REF-902817',
+          tokenHash: '0x8f2a93c7d19c3e',
+          icon: '🕊️',
+          status: 'موثقة ومحمية',
+          date: '01 نوفمبر 2026'
+        },
+        {
+          id: 'SBT-MIT-9941',
+          title: 'شهادة ماجستير هندسة البرمجيات والأنظمة الموزعة',
+          issuer: 'معهد ماساتشوستس للتكنولوجيا (MIT)',
+          category: 'خريج جامعي',
+          holderName: 'أميرة الحسن',
+          idNumber: 'MIT-ENG-2026-9941',
+          tokenHash: '0x4c1e7a8820f1b4',
+          icon: '🎓',
+          status: 'موثقة ومحمية',
+          date: '15 يونيو 2025'
+        },
+        {
+          id: 'SBT-SEC-8842',
+          title: 'تصريح أمني رقمي - خبير أمن سيبراني ومعماريات الثقة الصفرية',
+          issuer: 'الهيئة العالمية للأمن السيبراني',
+          category: 'موظف',
+          holderName: 'أميرة الحسن',
+          idNumber: 'EMP-SEC-8842',
+          tokenHash: '0x3a7d11ef8849b2',
+          icon: '💼',
+          status: 'موثقة ومحمية',
+          date: '10 يناير 2026'
+        }
+      ]
+    };
+
+    // Profiles Configuration for Instant Live Demo Presets
+    const profiles = {
+      refugee: {
+        name: 'أميرة الحسن',
+        id: 'UNHCR-REF-902817',
+        category: 'لاجئ',
+        doc: 'وثيقة لجوء وحماية دولية صادرة من مفوضية الأمم المتحدة (UNHCR)',
+        issuer: 'UNHCR جنيف'
+      },
+      graduate: {
+        name: 'مروان الشامي',
+        id: 'MIT-ENG-2026-9941',
+        category: 'خريج جامعي',
+        doc: 'شهادة ماجستير في هندسة البرمجيات والأنظمة التشفيرية الموزعة',
+        issuer: 'معهد ماساتشوستس للتكنولوجيا (MIT)'
+      },
+      employee: {
+        name: 'سارة العلي',
+        id: 'EMP-SEC-8842',
+        category: 'موظف',
+        doc: 'تصريح أمني رقمي - خبير أمن سيبراني ومعماريات الثقة الصفرية',
+        issuer: 'الهيئة العالمية للأمن السيبراني'
+      },
+      citizen: {
+        name: 'عمر القحطاني',
+        id: 'NAT-EID-881290',
+        category: 'مواطن',
+        doc: 'جواز السفر الرقمي السيادي وبطاقة الهوية الوطنية الموحدة',
+        issuer: 'وزارة التحول الرقمي والأحوال المدنية'
+      }
+    };
+
+    // =========================================================
+    // THEME MANAGEMENT (DEFAULT: DARK MODE, LIGHT: WARM BEIGE/MOCHA)
+    // =========================================================
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      updateThemeUI(isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function updateThemeUI(isDark) {
+      const icon = document.getElementById('themeIcon');
+      const label = document.getElementById('themeLabel');
+      if (isDark) {
+        icon.textContent = '☀️';
+        label.textContent = 'الوضع الفاتح الأنيق';
+      } else {
+        icon.textContent = '🌙';
+        label.textContent = 'الوضع الداكن المظلم';
+      }
+    }
+
+    // =========================================================
+    // VAULT CREDENTIALS RENDERING
+    // =========================================================
+    function renderCredentialsVault() {
+      const container = document.getElementById('vaultCredentialsList');
+      const countTag = document.getElementById('vaultCountTag');
+      
+      container.innerHTML = '';
+      countTag.textContent = `${state.vaultCredentials.length} وثائق معتمدة`;
+
+      if (state.vaultCredentials.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-warm-mochaSoft dark:text-slate-400 bg-warm-cream dark:bg-slate-950 rounded-xl border border-dashed border-warm-nude dark:border-slate-800 text-xs">
+            الخزينة فارغة حالياً. استخدم زر "+ إضافة وثيقة للخزينة" لإيداع وثائق وشهادات جديدة.
+          </div>
+        `;
+        return;
+      }
+
+      state.vaultCredentials.forEach((item, index) => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'p-3 rounded-xl border border-warm-sand dark:border-slate-800 bg-warm-cardBg dark:bg-slate-900/90 shadow-xs hover:border-warm-roseMuted dark:hover:border-indigo-500/50 transition';
+
+        let catBadgeStyle = 'bg-warm-pinkSoft dark:bg-indigo-950 text-warm-roseMuted dark:text-indigo-300 border-warm-pinkBorder dark:border-indigo-800';
+        if (item.category === 'خريج جامعي') catBadgeStyle = 'bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+        if (item.category === 'موظف') catBadgeStyle = 'bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800';
+        if (item.category === 'مواطن') catBadgeStyle = 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+
+        itemCard.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">${item.icon}</span>
+              <div>
+                <h4 class="text-xs font-bold text-warm-mochaDeep dark:text-white leading-tight">${item.title}</h4>
+                <div class="text-[10px] text-warm-mochaSoft dark:text-slate-400">${item.issuer}</div>
+              </div>
+            </div>
+
+            <!-- MANDATORY SOULBOUND BADGE -->
+            <span class="px-2 py-0.5 rounded-full bg-warm-pinkSoft dark:bg-amber-950/70 border border-warm-pinkBorder dark:border-amber-700/80 text-warm-roseMuted dark:text-amber-300 font-bold text-[9px] flex items-center gap-1 shrink-0 shimmer-badge">
+              <span>🔒 Soulbound - غير قابلة للنقل</span>
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between pt-1.5 border-t border-warm-nude/70 dark:border-slate-800 text-[10px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="text-warm-mochaSoft dark:text-slate-500 font-sans">القيد: <b class="font-mono text-warm-mochaDeep dark:text-slate-200" dir="ltr">${item.idNumber}</b></span>
+              <span class="px-1.5 py-0.2 rounded border text-[9px] ${catBadgeStyle}">${item.category}</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-600 dark:text-emerald-400 font-sans font-semibold">${item.status}</span>
+              <button onclick="removeCredentialFromVault(${index})" class="text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 p-0.5" title="إزالة من الخزينة">✕</button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(itemCard);
+      });
+    }
+
+    function removeCredentialFromVault(index) {
+      state.vaultCredentials.splice(index, 1);
+      renderCredentialsVault();
+    }
+
+    // =========================================================
+    // STEP 1: PRESETS & FORM HANDLING
+    // =========================================================
+    function loadPresetProfile(type) {
+      const p = profiles[type];
+      if (!p) return;
+
+      document.getElementById('fullName').value = p.name;
+      document.getElementById('idNumber').value = p.id;
+      document.getElementById('identityCategory').value = p.category;
+      document.getElementById('documentType').value = p.doc;
+
+      // Update primary card view
+      updatePrimaryCard(p.name, p.id, p.category, p.doc, p.issuer);
+    }
+
+    function handleCategorySelectionChange() {
+      const cat = document.getElementById('identityCategory').value;
+      const docInput = document.getElementById('documentType');
+
+      if (cat === 'لاجئ') docInput.value = 'وثيقة لجوء وحماية دولية صادرة من مفوضية الأمم المتحدة (UNHCR)';
+      else if (cat === 'خريج جامعي') docInput.value = 'شهادة ماجستير في هندسة البرمجيات والأنظمة التشفيرية الموزعة';
+      else if (cat === 'موظف') docInput.value = 'تصريح أمني رقمي - خبير أمن سيبراني ومعماريات الثقة الصفرية';
+      else if (cat === 'مواطن') docInput.value = 'جواز السفر الرقمي السيادي وبطاقة الهوية الوطنية الموحدة';
+    }
+
+    function handleIssueOrAppendSBT(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('fullName').value.trim();
+      const id = document.getElementById('idNumber').value.trim();
+      const cat = document.getElementById('identityCategory').value;
+      const doc = document.getElementById('documentType').value.trim();
+
+      let issuer = 'المفوضية السامية للأمم المتحدة لشؤون اللاجئين (UNHCR جنيف)';
+      if (cat === 'خريج جامعي') issuer = 'معهد ماساتشوستس للتكنولوجيا (MIT)';
+      else if (cat === 'موظف') issuer = 'الهيئة العالمية للأمن السيبراني';
+      else if (cat === 'مواطن') issuer = 'وزارة التحول الرقمي والأحوال المدنية';
+
+      // Update the primary card
+      updatePrimaryCard(name, id, cat, doc, issuer);
+
+      // Reset any active loss state
+      resetLossState();
+      triggerConfetti();
+    }
+
+    function appendNewCredentialToVault() {
+      const name = document.getElementById('fullName').value.trim() || 'أميرة الحسن';
+      const id = document.getElementById('idNumber').value.trim() || 'REF-' + Math.floor(Math.random() * 900000);
+      const cat = document.getElementById('identityCategory').value;
+      const doc = document.getElementById('documentType').value.trim() || 'وثيقة اعتماد رسمية';
+      const randomHex = Math.random().toString(16).substring(2, 8);
+
+      let icon = '📜';
+      let issuer = 'جهة التوثيق المعتمدة';
+      if (cat === 'لاجئ') { icon = '🕊️'; issuer = 'UNHCR جنيف'; }
+      else if (cat === 'خريج جامعي') { icon = '🎓'; issuer = 'معهد MIT'; }
+      else if (cat === 'موظف') { icon = '💼'; issuer = 'الهيئة العالمية للأمن السيبراني'; }
+      else if (cat === 'مواطن') { icon = '🏛️'; issuer = 'الأحوال المدنية'; }
+
+      const newCred = {
+        id: 'SBT-' + randomHex.toUpperCase(),
+        title: doc,
+        issuer: issuer,
+        category: cat,
+        holderName: name,
+        idNumber: id,
+        tokenHash: '0x' + randomHex + '4a2b',
+        icon: icon,
+        status: 'موثقة ومحمية',
+        date: new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', year: 'numeric' })
+      };
+
+      state.vaultCredentials.unshift(newCred);
+      renderCredentialsVault();
+      triggerConfetti();
+    }
+
+    function updatePrimaryCard(name, id, cat, doc, issuer) {
+      document.getElementById('cardHolderName').textContent = name;
+      document.getElementById('cardIdNumber').textContent = id;
+      document.getElementById('cardCategoryBadge').textContent = cat;
+      document.getElementById('cardDocumentType').textContent = doc;
+      document.getElementById('cardIssuer').textContent = issuer.split('(')[0].trim();
+      document.getElementById('cardTokenHash').textContent = '0x' + Math.random().toString(16).substring(2, 8) + '...7d19c3e';
+    }
+
+    // =========================================================
+    // STEP 2: ANTI-TRANSFER TEST
+    // =========================================================
+    function attemptTransfer() {
+      document.getElementById('transferErrorModal').classList.remove('hidden');
+    }
+
+    function closeTransferModal() {
+      document.getElementById('transferErrorModal').classList.add('hidden');
+    }
+
+    function handleWalletTransferClick() {
+      attemptTransfer();
+      const step2El = document.getElementById('step2Container');
+      if (step2El) {
+        step2El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function handleWalletRecoveryClick() {
+      triggerEmergencyLoss();
+      const step3El = document.getElementById('recoveryInteractiveFlow') || document.getElementById('step3Container');
+      if (step3El) {
+        step3El.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // =========================================================
+    // STEP 3: ENHANCED WALLET & KEY LOSS RECOVERY FLOW
+    // =========================================================
+    function triggerEmergencyLoss() {
+      state.isLocked = true;
+      state.guardianVerified = false;
+
+      // Reveal Detailed Workflow
+      document.getElementById('recoveryTriggerSection').classList.add('hidden');
+      document.getElementById('recoveryInteractiveFlow').classList.remove('hidden');
+      document.getElementById('recoverySuccessBanner').classList.add('hidden');
+      document.getElementById('revokedAddressDisplay').textContent = state.currentAddress;
+
+      // Reset Step B / Step C UI
+      resetGuardianChecklistUI();
+
+      // Show Locked Overlay on Primary Card AND Vault Card
+      document.getElementById('primaryCardLockedOverlay').classList.remove('hidden');
+      document.getElementById('vaultLockedOverlay').classList.remove('hidden');
+
+      // Update Vault Status
+      document.getElementById('vaultStatusText').textContent = '⚠️ مجمدة بسبب ضياع المفتاح';
+      document.getElementById('vaultStatusText').className = 'font-bold text-rose-600 dark:text-rose-400';
+
+      // Update Main Wallet Status Badge
+      const badge = document.getElementById('walletStatusBadge');
+      const dot = document.getElementById('walletStatusDot');
+      const text = document.getElementById('walletStatusText');
+
+      text.textContent = 'موقوفة ومفقودة // LOCKED';
+      badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30 flex items-center gap-1.5';
+      dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping';
+    }
+
+    function resetGuardianChecklistUI() {
+      ['1', '2', '3'].forEach(num => {
+        document.getElementById('guardianCheck' + num).textContent = '⏳';
+        const badge = document.getElementById('guardianBadge' + num);
+        badge.textContent = 'قيد الانتظار';
+        badge.className = 'text-[10px] text-warm-mochaSoft dark:text-slate-400 font-mono';
+      });
+
+      const tag = document.getElementById('quorumStatusTag');
+      tag.textContent = 'بانتظار الفحص';
+      tag.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20';
+
+      const verifyBtn = document.getElementById('startGuardianVerificationBtn');
+      verifyBtn.disabled = false;
+      verifyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      verifyBtn.innerHTML = '<span>🔍 بدء فحص وتوثيق نصاب الأوصياء (Verify Quorum)</span>';
+
+      const stepC = document.getElementById('recoveryStepCContainer');
+      stepC.classList.add('opacity-50', 'pointer-events-none');
+    }
+
+    // Step B: Guardian Quorum Multi-Sig Simulation
+    function runGuardianVerificationQuorum() {
+      const verifyBtn = document.getElementById('startGuardianVerificationBtn');
+      verifyBtn.disabled = true;
+      verifyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      verifyBtn.innerHTML = '<span class="animate-spin">🔄</span><span>جارٍ استطلاع شبكة الأوصياء والتحقق البيومتري...</span>';
+
+      // Animate Guardian 1
+      setTimeout(() => {
+        document.getElementById('guardianCheck1').textContent = '✅';
+        const b1 = document.getElementById('guardianBadge1');
+        b1.textContent = 'تم التوثيق (Biometrics OK)';
+        b1.className = 'text-[10px] text-emerald-600 dark:text-emerald-400 font-bold font-mono';
+      }, 700);
+
+      // Animate Guardian 2
+      setTimeout(() => {
+        document.getElementById('guardianCheck2').textContent = '✅';
+        const b2 = document.getElementById('guardianBadge2');
+        b2.textContent = 'تم التوثيق (Degree Signed)';
+        b2.className = 'text-[10px] text-emerald-600 dark:text-emerald-400 font-bold font-mono';
+      }, 1500);
+
+      // Animate Guardian 3 and complete Quorum
+      setTimeout(() => {
+        document.getElementById('guardianCheck3').textContent = '✅';
+        const b3 = document.getElementById('guardianBadge3');
+        b3.textContent = 'إجماع معتمد (Quorum 3/3)';
+        b3.className = 'text-[10px] text-emerald-600 dark:text-emerald-400 font-bold font-mono';
+
+        const tag = document.getElementById('quorumStatusTag');
+        tag.textContent = 'تم التحقق بنجاح (3/3)';
+        tag.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold';
+
+        verifyBtn.innerHTML = '<span>✅ اكتملت مصادقة الأوصياء بنجاح</span>';
+
+        // Unlock Step C
+        state.guardianVerified = true;
+        const stepC = document.getElementById('recoveryStepCContainer');
+        stepC.classList.remove('opacity-50', 'pointer-events-none');
+        stepC.classList.add('ring-2', 'ring-emerald-500/50');
+      }, 2300);
+    }
+
+    // Step C: Re-anchoring and Multi-Credential Vault Restoration
+    function finalizeRecoveryAndRestoreVault() {
+      if (!state.guardianVerified) return;
+
+      state.isLocked = false;
+      state.currentAddress = state.newAddress;
+
+      // Update Address Displays
+      document.getElementById('walletAddressDisplay').textContent = state.currentAddress;
+      document.getElementById('walletDidDisplay').textContent = `did:soul:${state.currentAddress.substring(0, 8)}...`;
+
+      // Hide Overlays
+      document.getElementById('primaryCardLockedOverlay').classList.add('hidden');
+      document.getElementById('vaultLockedOverlay').classList.add('hidden');
+
+      // Update Vault Items Status
+      state.vaultCredentials.forEach(item => {
+        item.status = '✅ تم النقل للمحفظة الجديدة';
+      });
+      renderCredentialsVault();
+
+      // Update Vault Status Banner
+      document.getElementById('vaultStatusText').textContent = '● مستعادة ونشطة على المحفظة الجديدة';
+      document.getElementById('vaultStatusText').className = 'font-bold text-emerald-600 dark:text-emerald-400';
+
+      // Update Main Wallet Status Badge
+      const badge = document.getElementById('walletStatusBadge');
+      const dot = document.getElementById('walletStatusDot');
+      const text = document.getElementById('walletStatusText');
+
+      text.textContent = 'مستعادة بالكامل // RESTORED';
+      badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5';
+      dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+
+      // Show Success Banner with Multi-Credential Count
+      const successBanner = document.getElementById('recoverySuccessBanner');
+      const successText = document.getElementById('successBannerText');
+      successText.textContent = `تم بنجاح نقل هوية الروح وإعادة ربط كامل وثائق الخزينة الـ (${state.vaultCredentials.length}) المعتمدة إلى العنوان الجديد (${state.currentAddress}) دون ضياع أي وثيقة أو شهادة!`;
+      successBanner.classList.remove('hidden');
+
+      // Trigger Celebration Confetti
+      triggerConfetti();
+    }
+
+    function resetLossState() {
+      state.isLocked = false;
+      state.guardianVerified = false;
+      state.currentAddress = state.originalAddress;
+
+      document.getElementById('walletAddressDisplay').textContent = state.currentAddress;
+      document.getElementById('walletDidDisplay').textContent = `did:soul:${state.currentAddress.substring(0, 8)}...`;
+
+      document.getElementById('recoveryTriggerSection').classList.remove('hidden');
+      document.getElementById('recoveryInteractiveFlow').classList.add('hidden');
+      document.getElementById('recoverySuccessBanner').classList.add('hidden');
+      document.getElementById('primaryCardLockedOverlay').classList.add('hidden');
+      document.getElementById('vaultLockedOverlay').classList.add('hidden');
+
+      document.getElementById('vaultStatusText').textContent = '● مؤمنة ومربوطة بالـ DID';
+      document.getElementById('vaultStatusText').className = 'font-bold text-emerald-600 dark:text-emerald-400';
+
+      state.vaultCredentials.forEach(item => {
+        item.status = 'موثقة ومحمية';
+      });
+      renderCredentialsVault();
+
+      const badge = document.getElementById('walletStatusBadge');
+      const dot = document.getElementById('walletStatusDot');
+      const text = document.getElementById('walletStatusText');
+
+      text.textContent = 'نشطة ومحمية // ACTIVE';
+      badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5';
+      dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+    }
+
+    function resetSimulator() {
+      state.vaultCredentials = [
+        {
+          id: 'SBT-REF-9028',
+          title: 'وثيقة لجوء وحماية دولية معتمدة',
+          issuer: 'المفوضية السامية للأمم المتحدة لشؤون اللاجئين (UNHCR جنيف)',
+          category: 'لاجئ',
+          holderName: 'أميرة الحسن',
+          idNumber: 'UNHCR-REF-902817',
+          tokenHash: '0x8f2a93c7d19c3e',
+          icon: '🕊️',
+          status: 'موثقة ومحمية',
+          date: '01 نوفمبر 2026'
+        },
+        {
+          id: 'SBT-MIT-9941',
+          title: 'شهادة ماجستير هندسة البرمجيات والأنظمة الموزعة',
+          issuer: 'معهد ماساتشوستس للتكنولوجيا (MIT)',
+          category: 'خريج جامعي',
+          holderName: 'أميرة الحسن',
+          idNumber: 'MIT-ENG-2026-9941',
+          tokenHash: '0x4c1e7a8820f1b4',
+          icon: '🎓',
+          status: 'موثقة ومحمية',
+          date: '15 يونيو 2025'
+        },
+        {
+          id: 'SBT-SEC-8842',
+          title: 'تصريح أمني رقمي - خبير أمن سيبراني ومعماريات الثقة الصفرية',
+          issuer: 'الهيئة العالمية للأمن السيبراني',
+          category: 'موظف',
+          holderName: 'أميرة الحسن',
+          idNumber: 'EMP-SEC-8842',
+          tokenHash: '0x3a7d11ef8849b2',
+          icon: '💼',
+          status: 'موثقة ومحمية',
+          date: '10 يناير 2026'
+        }
+      ];
+
+      loadPresetProfile('refugee');
+      renderCredentialsVault();
+      resetLossState();
+      closeTransferModal();
+    }
+
+    // =========================================================
+    // CANVAS CONFETTI ENGINE (PURE JAVASCRIPT, SELF-CONTAINED)
+    // =========================================================
+    function triggerConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#B56B77', '#7D6B60', '#6366F1', '#10B981', '#F59E0B', '#E8DDD2'];
+
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 400,
+          y: canvas.height * 0.4 + (Math.random() - 0.5) * 100,
+          w: Math.random() * 8 + 4,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 10,
+          vy: (Math.random() - 0.8) * 12,
+          tilt: Math.random() * 10,
+          tiltAngle: Math.random() * 2,
+          tiltAngleIncrement: Math.random() * 0.08 + 0.04,
+          alpha: 1
+        });
+      }
+
+      let animationFrame;
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.3;
+          p.tiltAngle += p.tiltAngleIncrement;
+          p.tilt = Math.sin(p.tiltAngle) * 12;
+          p.alpha -= 0.014;
+
+          if (p.alpha > 0) {
+            active = true;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.rect(p.x + p.tilt, p.y, p.w, p.h);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (active) {
+          animationFrame = requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      cancelAnimationFrame(animationFrame);
+      render();
+    }
+
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confettiCanvas');
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeTransferModal();
+    });
+
+    // Initialize on Load (Defaults to Dark Mode)
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCredentialsVault();
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        updateThemeUI(false);
+      } else {
+        document.documentElement.classList.add('dark');
+        updateThemeUI(true);
+      }
+    });
+  </script>
+</body>
+</html>
